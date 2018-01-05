@@ -1,0 +1,28 @@
+{
+
+  "description": "Tab managment",
+  "manifest_version": 2,
+  "name": "Tab manager",
+  "version": "1.0",
+  "homepage_url": "https://github.com/mdn/webextensions-examples/tree/master/borderify",
+  "icons": {
+    "48": "icons/tabs-48.png",
+    "128": "icons/tabs-128.png"
+  },
+  "permissions": [
+    "tabs"
+  ],
+  "browser_action": {
+    "browser_style": true,
+    "default_title": "Tab manager",
+    "default_icon": {
+        "32": "icons/tabs-32.svg",
+        "128": "icons/tabs-128.svg"
+    }
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  }
+
+}
