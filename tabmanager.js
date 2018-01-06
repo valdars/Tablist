@@ -9,6 +9,10 @@ function updateTabList() {
     browser.tabs.query({}).then(tabs => {
         for (let tab of tabs) {
             let row = $("<tr>");
+
+            let favicon = $('<td>');
+            favicon.append($('<img class="favicon">').prop('src', tab.favIconUrl));
+            row.append(favicon);
             
             let title = $('<td>').text(tab.title);
             row.append(title);
