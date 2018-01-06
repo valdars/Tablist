@@ -1,5 +1,4 @@
-let list = document.getElementById('tablist');
-//var tabs = await browser.tabs.query({});
+let list = $('#tablist');
 
 function createElement(text) {
     return document.createRange().createContextualFragment(text).firstChild;
@@ -9,25 +8,23 @@ function updateTabList() {
     var content = document.createDocumentFragment();
     browser.tabs.query({}).then(tabs => {
         for (let tab of tabs) {
-            let row = document.createElement("tr");
+            let row = $("<tr>");
             
-            let title = document.createElement('td');
-            title.textContent = tab.title;
-            row.appendChild(title);
+            let title = $('<td>').text(tab.title);
+            row.append(title);
 
-            let close = document.createElement('td');
-            let closeBtn = createElement('<a class="button"><span class="icon is-large"><i class="fa fa-lg fa-window-close-o"></i></span></a>');
+            let close = $('<td>');
+            let closeBtn = $('<a class="button"><span class="icon is-large"><i class="fa fa-lg fa-window-close-o"></i></span></a>');
             let tabId = tab.id;
-            closeBtn.addEventListener('click', () => {
+            closeBtn.on('click', () => {
                 browser.tabs.remove(tabId);
             });
-            close.appendChild(closeBtn);
-            row.appendChild(close);
+            close.append(closeBtn);
+            row.append(close);
             
-            content.appendChild(row);
+            content.appendChild(row[0]);
         }
-        list.innerHTML = '';
-        list.appendChild(content);
+        list.html(content);
     });
 }
 
@@ -42,3 +39,15 @@ browser.tabs.onReplaced.addListener(updateTabList);
 browser.tabs.onUpdated.addListener(updateTabList);
 
 updateTabList();
+
+function initTabs() {
+    $('[data-tablink]').on('click', (event) => {
+        let $this = $(event.currentTarget);
+        let id = $this.data('tablink');
+        $('[data-tablink]').parent().removeClass('is-active');
+        $this.parent().addClass('is-active');
+        $('[data-tabcontainer]').addClass('is-hidden');
+        $('[data-tabcontainer="'+id+'"]').removeClass('is-hidden');
+    });
+}
+initTabs();
