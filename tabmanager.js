@@ -28,21 +28,36 @@ function updateTabList() {
 }
 
 // create html for closed tabs list
-function updateClosedTabList(tabs) {
+function updateClosedTabList() {
     var content = document.createDocumentFragment();
-    for (let tab of tabs) {
-        let row = $("<tr>");
+    browser.sessions.getRecentlyClosed().then(sessions => {
+        for (let session of sessions) {
+            if (!session.tab) {
+                continue;
+            }
+            let tab = session.tab;
 
-        let favicon = $('<td>');
-        favicon.append($('<img class="favicon">').prop('src', tab.favIconUrl));
-        row.append(favicon);
+            let row = $("<tr>");
 
-        let title = $('<td>').text(tab.title);
-        row.append(title);
+            let favicon = $('<td>');
+            favicon.append($('<img class="favicon">').prop('src', tab.favIconUrl));
+            row.append(favicon);
 
-        content.appendChild(row[0]);
-    }
-    $('#closedtablist').html(content);
+            let title = $('<td>').text(tab.title);
+            row.append(title);
+
+            let restore = $('<td>');
+            let restoreBtn = $('<a class="button"><span class="icon is-large"><i class="fa fa-lg fa-window-restore"></i></span></a>');
+            restoreBtn.on('click', () => {
+                browser.sessions.restore(tab.sessionId);
+            });
+            restore.append(restoreBtn);
+            row.append(restore);
+
+            content.appendChild(row[0]);
+        }
+        $('#closedtablist').html(content);
+    });
 }
 
 // init html tabs functionality
@@ -69,22 +84,11 @@ browser.tabs.onRemoved.addListener(() => {
 browser.tabs.onReplaced.addListener(updateTabList);
 browser.tabs.onUpdated.addListener(updateTabList);
 
-// listen for messages
-function handleMessage(request, sender, sendResponse) {
-    if (request.action === 'closedTabs') {
-        updateClosedTabList(request.tabs);
-    }
-}
-browser.runtime.onMessage.addListener(handleMessage);
+// keep track of certain tabs events to update closed tab list
+browser.sessions.onChanged.addListener(updateClosedTabList);
+browser.tabs.onCreated.addListener(updateClosedTabList);
 
-// tab list page initialization code
+//  initialization code
 updateTabList();
+updateClosedTabList();
 initTabs();
-
-// get closed tabs first time, later they are automatically sent from backend
-browser.runtime.sendMessage({
-    action: 'getClosedTabs'
-})
-    .then(response => {
-        updateClosedTabList(response);
-    });

@@ -10,7 +10,8 @@
     "128": "icons/tabs-128.png"
   },
   "permissions": [
-    "tabs"
+    "tabs",
+    "sessions"
   ],
   "browser_action": {
     "browser_style": true,
