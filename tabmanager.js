@@ -3,18 +3,23 @@ function updateTabList() {
     var content = document.createDocumentFragment();
     browser.tabs.query({}).then(tabs => {
         for (let tab of tabs) {
+            let tabId = tab.id;
             let row = $("<tr>");
 
             let favicon = $('<td>');
             favicon.append($('<img class="favicon">').prop('src', tab.favIconUrl));
             row.append(favicon);
 
-            let title = $('<td>').text(tab.title);
+            let titleLink = $('<a href="javascript:void();">'+tab.title+'</a>');
+            titleLink.on('click', () => {
+                browser.tabs.update(tabId, {active: true});
+            });
+            let title = $('<td>').append(titleLink);
             row.append(title);
 
             let close = $('<td>');
             let closeBtn = $('<a class="button"><span class="icon is-large"><i class="fa fa-lg fa-window-close-o"></i></span></a>');
-            let tabId = tab.id;
+            
             closeBtn.on('click', () => {
                 browser.tabs.remove(tabId);
             });
