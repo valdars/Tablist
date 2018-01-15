@@ -11,7 +11,8 @@
   },
   "permissions": [
     "tabs",
-    "sessions"
+    "sessions",
+    "storage"
   ],
   "browser_action": {
     "browser_style": true,
@@ -24,6 +25,13 @@
 
   "background": {
     "scripts": ["background.js"]
+  },
+
+  "applications": {
+    "gecko": {
+      "id": "tabmanager@valdars.eu",
+      "strict_min_version": "42.0"
+    }
   }
 
 }
