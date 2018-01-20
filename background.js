@@ -1,6 +1,6 @@
 function openMyPage() {
   browser.tabs.create({
-    "url": "/tabmanager.html"
+    "url": "/tabs.html"
   });
 }
 
