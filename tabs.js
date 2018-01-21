@@ -1,11 +1,24 @@
 var lockList = [];
 
 // get all tabs and create html for tab list
-function updateTabList() {
+function updateTabList(options) {
+    if(options === undefined) {
+        options = {};
+    }
     var content = document.createDocumentFragment();
+
+    // if searching create regexp object for filtering
+    let filter = null;
+    if(options.search !== undefined && options.search.length > 0) {
+        filter = new RegExp(`.*${options.search}.*`, 'i');
+    }
+
     browser.tabs.query({}).then(tabs => {
-        //console.log(tabs[0]);
         for (let tab of tabs) {
+            if(filter && !filter.test(tab.title)) {
+                continue;
+            }
+
             let tabId = tab.id;
             let row = $("<tr>");
 
@@ -23,12 +36,12 @@ function updateTabList() {
             let commands = $('<td>');
 
             let lockBtn = '';
-            if(isLocked(tab.url)) {
+            if (isLocked(tab.url)) {
                 lockBtn = $('<a class="button"><span class="icon is-large has-text-success"><i class="fa fa-lg fa-unlock"></i></span></a>');
                 lockBtn.on('click', () => {
                     unlock(tab.url);
                 });
-            }else {
+            } else {
                 lockBtn = $('<a class="button"><span class="icon is-large has-text-danger"><i class="fa fa-lg fa-lock"></i></span></a>');
                 lockBtn.on('click', () => {
                     lock(tab.url);
@@ -51,11 +64,11 @@ function updateTabList() {
 }
 
 function updateLockList() {
-    browser.storage.sync.get({locked: {}})
-    .then(results => {
-        lockList = results.locked;
-        updateTabList();
-    });
+    browser.storage.sync.get({ locked: {} })
+        .then(results => {
+            lockList = results.locked;
+            updateTabList();
+        });
 }
 
 function saveLockList() {
@@ -95,3 +108,25 @@ browser.tabs.onUpdated.addListener(updateTabList);
 // initialization code
 updateTabList();
 updateLockList();
+
+var wto;
+$('#search').on('keyup', function() {
+    var $this = $(this);
+    clearTimeout(wto);
+    wto = setTimeout(function () {
+        updateTabList({
+            search: $this.val()
+        })
+    }, 300);
+});
+
+$('#btnSearchReset').on('click', () => {
+    $('#search').val('');
+    updateTabList();
+});
+
+$('#btnSearch').on('click', () => {
+    updateTabList({
+        search: $('#search').val()
+    })
+});
