@@ -1,28 +1,46 @@
 var lockList = [];
+var selectList = [];
+var currentTabs = [];
+var isUpdateDisabled = false;
 
 // get all tabs and create html for tab list
 function updateTabList(options) {
-    if(options === undefined) {
+    if(isUpdateDisabled) {
+        return;
+    }
+    currentTabs = [];
+    if (options === undefined) {
         options = {};
     }
     var content = document.createDocumentFragment();
 
     // if searching create regexp object for filtering
     let filter = null;
-    if(options.search !== undefined && options.search.length > 0) {
+    if (options.search !== undefined && options.search.length > 0) {
         filter = new RegExp(`.*${options.search}.*`, 'i');
     }
 
     browser.tabs.query({}).then(tabs => {
         for (let tab of tabs) {
-            if(filter && !filter.test(tab.title)) {
+            if (filter && !filter.test(tab.title)) {
                 continue;
             }
+
+            currentTabs.push(tab);
 
             let tabId = tab.id;
             let row = $("<tr>");
 
-            let titleLink = $(`<a href="javascript:void();">${tab.title}</a>`);
+            let selectBox = $('<input class="checkbox" type="checkbox" />').prop('checked', isSelected(tabId)).on('change', function (evt) {
+                if ($(this).prop('checked')) {
+                    select(tabId);
+                } else {
+                    deselect(tabId);
+                }
+            });
+            row.append($('<td>').append(selectBox));
+
+            let titleLink = $(`<a href="javascript:void();">${tab.id} ${tab.title}</a>`);
             titleLink.on('click', () => {
                 browser.tabs.update(tabId, { active: true });
             });
@@ -58,6 +76,20 @@ function updateTabList(options) {
         }
         $('#tablist').html(content);
     });
+}
+
+function isSelected(tabId) {
+    return selectList.includes(tabId);
+}
+
+function select(tabId) {
+    if (!isSelected(tabId)) {
+        selectList.push(tabId);
+    }
+}
+
+function deselect(tabId) {
+    selectList = selectList.filter(x => x != tabId);
 }
 
 function updateLockList() {
@@ -107,7 +139,7 @@ updateTabList();
 updateLockList();
 
 var wto;
-$('#search').on('keyup', function() {
+$('#search').on('keyup', function () {
     var $this = $(this);
     clearTimeout(wto);
     wto = setTimeout(function () {
@@ -126,4 +158,28 @@ $('#btnSearch').on('click', () => {
     updateTabList({
         search: $('#search').val()
     })
+});
+
+$('.select-all-btn').on('click', () => {
+    currentTabs.forEach(tab => {
+        select(tab.id);
+    });
+    updateTabList();
+});
+
+$('.deselect-all-btn').on('click', () => {
+    currentTabs.forEach(tab => {
+        deselect(tab.id);
+    });
+    updateTabList();
+});
+
+$('.close-all-btn').on('click', () => {
+    isUpdateDisabled = true;
+    selectList.forEach(tabId => {
+        deselect(tabId);
+        browser.tabs.remove(tabId);
+    });
+    isUpdateDisabled = false;
+    updateTabList();
 });
