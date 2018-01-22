@@ -22,15 +22,12 @@ function updateTabList(options) {
             let tabId = tab.id;
             let row = $("<tr>");
 
-            let favicon = $('<td>');
-            favicon.append($('<img class="favicon">').prop('src', tab.favIconUrl));
-            row.append(favicon);
-
             let titleLink = $(`<a href="javascript:void();">${tab.title}</a>`);
             titleLink.on('click', () => {
                 browser.tabs.update(tabId, { active: true });
             });
-            let title = $('<td>').append(titleLink);
+            let favIcon = $('<img class="favicon">&nbsp;').prop('src', tab.favIconUrl);
+            let title = $('<td>').append(favIcon).append(titleLink);
             row.append(title);
 
             let commands = $('<td>');
