@@ -3,6 +3,7 @@ var selectList = [];
 var currentTabs = [];
 var isUpdateDisabled = false;
 var searchText = null;
+var defaultFavIcon = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
 
 // get all tabs and create html for tab list
 function updateTabList() {
@@ -44,7 +45,13 @@ function updateTabList() {
             titleLink.on('click', () => {
                 browser.tabs.update(tabId, { active: true });
             });
-            let favIcon = $('<img class="favicon">&nbsp;').prop('src', tab.favIconUrl);
+            let favIcon = $('<img class="favicon">&nbsp;')
+            if(tab.favIconUrl) {
+                favIcon.prop('src', tab.favIconUrl);
+            }else {
+                favIcon.prop('src', defaultFavIcon);
+            }
+            
             let title = $('<td>').append(favIcon).append(titleLink);
             row.append(title);
 
