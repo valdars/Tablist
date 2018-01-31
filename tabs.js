@@ -193,3 +193,25 @@ $('.close-all-btn').on('click', () => {
     isUpdateDisabled = false;
     updateTabList();
 });
+
+$('.lock-all-btn').on('click', () => {
+    isUpdateDisabled = true;
+    currentTabs.forEach(tab => {
+        if(isSelected(tab.id) && !isLocked(tab.url)) {
+            lock(tab.url);
+        }
+    });
+    isUpdateDisabled = false;
+    updateTabList();
+});
+
+$('.unlock-all-btn').on('click', () => {
+    isUpdateDisabled = true;
+    currentTabs.forEach(tab => {
+        if(isSelected(tab.id) && isLocked(tab.url)) {
+            unlock(tab.url);
+        }
+    });
+    isUpdateDisabled = false;
+    updateTabList();
+});
