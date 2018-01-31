@@ -6,10 +6,11 @@ var searchText = null;
 var defaultFavIcon = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
 
 // get all tabs and create html for tab list
-function updateTabList() {
+function updateTabList(options) {
     if(isUpdateDisabled) {
         return;
     }
+    options = options || {};
     currentTabs = [];
     var content = document.createDocumentFragment();
 
@@ -22,6 +23,9 @@ function updateTabList() {
     browser.tabs.query({}).then(tabs => {
         for (let tab of tabs) {
             if (filter && !filter.test(tab.title)) {
+                continue;
+            }
+            if(options.ignore && tab.id == options.ignore) {
                 continue;
             }
 
@@ -136,9 +140,9 @@ browser.tabs.onAttached.addListener(updateTabList);
 browser.tabs.onCreated.addListener(updateTabList);
 browser.tabs.onDetached.addListener(updateTabList);
 browser.tabs.onMoved.addListener(updateTabList);
-browser.tabs.onRemoved.addListener(() => {
-    // there seems to be delay in removed tab being actually purged
-    setTimeout(updateTabList, 200);
+browser.tabs.onRemoved.addListener((x) => {
+    // there seems to be delay in removed tab being actually removed
+    updateTabList({ignore: tabId});
 });
 browser.tabs.onReplaced.addListener(updateTabList);
 browser.tabs.onUpdated.addListener(updateTabList);
