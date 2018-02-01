@@ -45,7 +45,7 @@ function updateTabList(options) {
             });
             row.append($('<td>').append(selectBox));
 
-            let titleLink = $(`<a href="javascript:void();">${tab.title}</a>`);
+            let titleLink = $(`<a href="#" onclick="return false;">${tab.title}</a>`);
             titleLink.on('click', () => {
                 browser.tabs.update(tabId, { active: true });
             });

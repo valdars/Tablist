@@ -1,3 +1,5 @@
+var defaultFavIcon = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+
 // create html for closed tabs list
 function updateClosedTabList() {
     var content = document.createDocumentFragment();
@@ -10,20 +12,23 @@ function updateClosedTabList() {
 
             let row = $("<tr>");
 
-            let favicon = $('<td>');
-            favicon.append($('<img class="favicon">').prop('src', tab.favIconUrl));
-            row.append(favicon);
+            let favIcon = $('<img class="favicon">&nbsp;')
+            if(tab.favIconUrl) {
+                favIcon.prop('src', tab.favIconUrl);
+            }else {
+                favIcon.prop('src', defaultFavIcon);
+            }
 
-            let title = $('<td>').text(tab.title);
+            let title = $('<td>').append(favIcon).append(`<span>${tab.title}</span`);
             row.append(title);
 
-            let restore = $('<td>');
+            let commands = $('<td>');
             let restoreBtn = $('<a class="button"><span class="icon is-large"><i class="fa fa-lg fa-window-restore"></i></span></a>');
             restoreBtn.on('click', () => {
                 browser.sessions.restore(tab.sessionId);
             });
-            restore.append(restoreBtn);
-            row.append(restore);
+            commands.append(restoreBtn);
+            row.append(commands);
 
             content.appendChild(row[0]);
         }
