@@ -22,7 +22,7 @@ function updateTabList(options) {
 
     browser.tabs.query({}).then(tabs => {
         for (let tab of tabs) {
-            if (filter && !filter.test(tab.title)) {
+            if (filter && !filter.test(tab.title) && !filter.test(tab.url)) {
                 continue;
             }
             if(options.ignore && tab.id == options.ignore) {
@@ -45,7 +45,7 @@ function updateTabList(options) {
             });
             row.append($('<td>').append(selectBox));
 
-            let titleLink = $(`<a href="#" onclick="return false;">${tab.title}</a>`);
+            let titleLink = $(`<a href="${tab.url}" onclick="return false;">${tab.title}</a>`);
             titleLink.on('click', () => {
                 browser.tabs.update(tabId, { active: true });
             });
