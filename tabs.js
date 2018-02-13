@@ -4,6 +4,7 @@ var currentTabs = [];
 var isUpdateDisabled = false;
 var searchText = null;
 var defaultFavIcon = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
+var windowId = browser.windows.WINDOW_ID_CURRENT;
 
 // get all tabs and create html for tab list
 function updateTabList(options) {
@@ -20,7 +21,7 @@ function updateTabList(options) {
         filter = new RegExp(`.*${searchText}.*`, 'i');
     }
 
-    browser.tabs.query({}).then(tabs => {
+    browser.tabs.query({windowId: windowId}).then(tabs => {
         for (let tab of tabs) {
             if (filter && !filter.test(tab.title) && !filter.test(tab.url)) {
                 continue;
@@ -147,10 +148,6 @@ browser.tabs.onRemoved.addListener((x) => {
 browser.tabs.onReplaced.addListener(updateTabList);
 browser.tabs.onUpdated.addListener(updateTabList);
 
-// initialization code
-updateTabList();
-updateLockList();
-
 var wto;
 $('#search').on('keyup', function () {
     var $this = $(this);
@@ -219,3 +216,6 @@ $('.unlock-all-btn').on('click', () => {
     isUpdateDisabled = false;
     updateTabList();
 });
+
+// initialization code
+updateLockList();
