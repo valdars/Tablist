@@ -46,9 +46,11 @@ function updateTabList(options) {
             });
             row.append($('<td>').append(selectBox));
 
-            let titleLink = $(`<a href="${tab.url}" onclick="return false;">${tab.title}</a>`);
-            titleLink.on('click', () => {
+            let titleLink = $(`<a href="${tab.url}">${tab.title}</a>`);
+            titleLink.on('click', function(evt) {
+                evt.preventDefault();
                 browser.tabs.update(tabId, { active: true });
+                return false;
             });
             let favIcon = $('<img class="favicon">&nbsp;')
             if(tab.favIconUrl) {
@@ -60,23 +62,23 @@ function updateTabList(options) {
             let title = $('<td>').append(favIcon).append(titleLink);
             row.append(title);
 
-            let commands = $('<td>');
+            let commands = $('<td style="min-width: 100px;">');
 
             let lockBtn = '';
             if (isLocked(tab.url)) {
-                lockBtn = $('<a class="button"><span class="icon is-large has-text-success"><i class="fa fa-lg fa-unlock"></i></span></a>');
+                lockBtn = $('<a class="button is-pulled-right"><span class="icon is-large has-text-success"><i class="fa fa-lg fa-unlock"></i></span></a>');
                 lockBtn.on('click', () => {
                     unlock(tab.url);
                 });
             } else {
-                lockBtn = $('<a class="button"><span class="icon is-large has-text-danger"><i class="fa fa-lg fa-lock"></i></span></a>');
+                lockBtn = $('<a class="button is-pulled-right"><span class="icon is-large has-text-danger"><i class="fa fa-lg fa-lock"></i></span></a>');
                 lockBtn.on('click', () => {
                     lock(tab.url);
                 });
             }
             commands.append(lockBtn);
 
-            let closeBtn = $('<a class="button"><span class="icon is-large"><i class="fa fa-lg fa-window-close-o"></i></span></a>');
+            let closeBtn = $('<a class="button is-pulled-right"><span class="icon is-large has-text-danger"><i class="fa fa-lg fa-times"></i></span></a>');
             closeBtn.on('click', () => {
                 if(!isLocked(tab.url)) {
                     browser.tabs.remove(tabId);
@@ -107,7 +109,7 @@ function deselect(tabId) {
 }
 
 function updateLockList() {
-    browser.storage.sync.get({ locked: {} })
+    browser.storage.sync.get({ locked: [] })
         .then(results => {
             lockList = results.locked;
             updateTabList();

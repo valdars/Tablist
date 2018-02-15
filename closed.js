@@ -23,7 +23,7 @@ function updateClosedTabList() {
             row.append(title);
 
             let commands = $('<td>');
-            let restoreBtn = $('<a class="button"><span class="icon is-large"><i class="fa fa-lg fa-window-restore"></i></span></a>');
+            let restoreBtn = $('<a class="button"><span class="icon is-large"><i class="far fa-lg fa-window-restore"></i></span></a>');
             restoreBtn.on('click', () => {
                 browser.sessions.restore(tab.sessionId);
             });
