@@ -4,7 +4,8 @@ var currentTabs = [];
 var isUpdateDisabled = false;
 var searchText = null;
 var defaultFavIcon = 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
-var windowId = browser.windows.WINDOW_ID_CURRENT;
+var currentTabId = null;
+browser.tabs.getCurrent().then(tab => currentTabId = tab.id);
 
 // get all tabs and create html for tab list
 function updateTabList(options) {
@@ -21,7 +22,7 @@ function updateTabList(options) {
         filter = new RegExp(`.*${searchText}.*`, 'i');
     }
 
-    browser.tabs.query({windowId: windowId}).then(tabs => {
+    browser.tabs.query({}).then(tabs => {
         for (let tab of tabs) {
             if (filter && !filter.test(tab.title) && !filter.test(tab.url)) {
                 continue;
@@ -91,6 +92,7 @@ function updateTabList(options) {
             content.appendChild(row[0]);
         }
         $('#tablist').html(content);
+        $('#tabsMenuItem').text(`Tabs (${currentTabs.length})`)
     });
 }
 
@@ -188,7 +190,7 @@ $('.deselect-all-btn').on('click', () => {
 $('.close-all-btn').on('click', () => {
     isUpdateDisabled = true;
     currentTabs.forEach(tab => {
-        if(isSelected(tab.id) && !isLocked(tab.url)) {
+        if(isSelected(tab.id) && !isLocked(tab.url) && tab.id !== currentTabId) {
             deselect(tab.id);
             browser.tabs.remove(tab.id);
         }
