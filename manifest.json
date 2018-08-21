@@ -12,7 +12,8 @@
   "permissions": [
     "tabs",
     "sessions",
-    "storage"
+    "storage",
+    "management"
   ],
   "browser_action": {
     "browser_style": true,

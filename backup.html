@@ -5,17 +5,34 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="icons/tabs-48.png" />
-    <title>Closed tabs - Tab manager</title>
+    <title>Backup tabs - Tab manager</title>
     <script src="libs/fontawesome/js/fontawesome-all.min.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="libs/bulma/bulma.min.css">
     <script src="libs/jquery/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
 
-    <style media="screen">
-        .favicon {
-            width: 2.5em;
-            margin-right: 1em;
+    <script type="template" id="templateHtmlBackup">
+            <!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tabs</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        li {
+            list-style: none;
         }
     </style>
+</head>
+
+<body>
+    <ul>
+        {list}
+    </ul>
+</body>
+
+</html>
+    </script>
 </head>
 
 <body>
@@ -26,10 +43,10 @@
                     <a class="navbar-item is-tab" href="tabs.html">Tabs</a>
                 </p>
                 <p class="level-item">
-                    <a class="navbar-item is-tab is-active" href="closed.html">Closed</a>
+                    <a class="navbar-item is-tab" href="closed.html">Closed</a>
                 </p>
                 <p class="level-item">
-                    <a class="navbar-item is-tab" href="backup.html">Backup</a>
+                    <a class="navbar-item is-tab is-active" href="backup.html">Backup</a>
                 </p>
             </div>
         </div>
@@ -38,14 +55,14 @@
     <section class="section" style="margin-top: 30px;">
 
         <div class="container">
-            <table class="table is-striped is-hoverable is-fullwidth">
-                <tbody id="closedtablist">
-
-                </tbody>
-            </table>
+            <a class="button" id="btnTabsTxtBackup">Export tabs to txt</a>
+            <a class="button" id="btnTabsHtmlackup">Export tabs to html</a>
+            <a class="button" id="btnExtTxtBackup">Export addons to txt</a>
+            <a class="button" id="btnExtHtmlackup">Export addons to html</a>
+            <a class="button" id="test">Test</a>
         </div>
     </section>
-    <script src="closed.js"></script>
+    <script src="backup.js"></script>
 </body>
 
 </html>
